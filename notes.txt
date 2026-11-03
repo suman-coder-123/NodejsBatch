@@ -1,0 +1,87 @@
+there are 3 types of modules in node js 
+
+
+1. custom module  => we can make this by our condition 
+2. built-in module  => they are already provuded by node.js 
+3. third party integrated module  => they can install 
+
+
+built-in module :
+
+1. FS module => file system module => this module allow node to intract with files and folder on our system 
+create file => writeFileSync()
+read file  => readFileSync()
+update file  => appendFileSync()
+delete file  => unlinkSync()
+rename file  => renameSync()
+folder create => mkdirSync()
+delete folder => rmdirSync()
+read the folders => readdirSync()
+exists or not => existsSync()
+
+
+
+
+2. Path Module =>  it hepls used to work with the file and directory path 
+
+join multiple folder name 
+get file names or path 
+get file extensions 
+get directory name 
+resolve absolute path 
+extract info from the path 
+
+
+
+HTTP method => Hypertext tranfer protocol 
+
+=> it is a communication protocol used by client and server to exchange the information over a network 
+
+client 
+server
+localhost 
+
+http://localhost:3000
+
+
+nodejs server => 3000
+react/vite => 5173
+express.js => 5000
+mongoDB => 27017
+
+
+
+
+req.method  => it tells us which HTTP method the client used 
+
+
+get => retrieve data 
+post => send or create data 
+put => replace eexisting data 
+patch => partially update data 
+delete => delete data 
+
+
+
+write something on server => .write 
+
+
+
+
+res.statuscode
+
+
+200 => ok 
+201 => created 
+400 => bad request 
+401 => unauthorized 
+403 => forbidden
+404 => not found 
+500 => internal server error 
+
+
+
+
+
+
+
