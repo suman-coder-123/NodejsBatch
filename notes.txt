@@ -82,6 +82,17 @@ res.statuscode
 
 
 
+express.js => express.js is a node.js used to build backend application and rest APIs 
+
+
+to install the express.js in app.js 
+
+
+middleware => it is checkpoint between the code execution 
+=> express.json();
+
+
+
 
 
 

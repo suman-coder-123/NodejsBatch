@@ -96,7 +96,7 @@
 
 
 // const { stat } = require("fs");
-const http = require("http");
+// const http = require("http");
 
 // const server = http.createServer((req , res) => {
 //     // res.end("hello! welcome to node.js server");
@@ -165,53 +165,243 @@ const http = require("http");
 
 // student registration api 
 
-const server = http.createServer((req , res) => {
-    if (req.url === "/register" && req.method === "POST") {
-        let body = "";
+// const server = http.createServer((req , res) => {
+//     if (req.url === "/register" && req.method === "POST") {
+//         let body = "";
 
-        req.on("data" , (chunk) => {
-            body += chunk;
-        });
+//         req.on("data" , (chunk) => {
+//             body += chunk;
+//         });
 
-        req.on("end" , () => {
-           try {
-            const student = JSON.parse(body);
-            console.log("data recieved ");
+//         req.on("end" , () => {
+//            try {
+//             const student = JSON.parse(body);
+//             console.log("data recieved ");
 
-            res.writeHead(201 , {
-                "Content-Type" : "application/json"
-            });
+//             res.writeHead(201 , {
+//                 "Content-Type" : "application/json"
+//             });
 
-            res.end(JSON.stringify({
-                message : "student registration successfully",
-                student : student
-            }));
-           } catch (error) {
-            res.writeHead(400 , {
-                "Content-Type" : "application/json"
-            });
+//             res.end(JSON.stringify({
+//                 message : "student registration successfully",
+//                 student : student
+//             }));
+//            } catch (error) {
+//             res.writeHead(400 , {
+//                 "Content-Type" : "application/json"
+//             });
 
-            res.end(JSON.stringify({
-                message : "invalid json data "
-            }));
-           }
-        });
-    } else {
-         res.writeHead(400 , {
-                "Content-Type" : "application/json"
-            });
-               res.end(JSON.stringify({
-                message : "invalid route  "
-            }));
+//             res.end(JSON.stringify({
+//                 message : "invalid json data "
+//             }));
+//            }
+//         });
+//     } else {
+//          res.writeHead(400 , {
+//                 "Content-Type" : "application/json"
+//             });
+//                res.end(JSON.stringify({
+//                 message : "invalid route  "
+//             }));
 
+//     }
+// });
+
+// server.listen(3000 , () => {
+//     console.log("server running on port 3000");
+// });
+
+
+
+
+
+
+
+
+
+const express = require("express");
+
+const app = express();
+
+
+app.use(express.json());
+
+
+app.get("/" , (req , res) => {
+    res.send("student management api is running ");
+});
+
+
+app.get("/about" , (req , res) => {
+    res.send("this is about page ");
+} );
+
+
+  let students = [
+        {
+        id : 1,
+        name : "rahul",
+        course : "mern stack "
+    }, 
+    {
+        id: 2, 
+        name : "priya",
+        course : "java",
+    },
+     {
+        id : 3,
+        name : "suman",
+        course : "java full stack",
     }
+    ];
+
+app.get("/api/students" , (req, res) => {
+
+    res.status(200).json({
+        success : true,
+        message : "student fetched successfully",
+        data : students
+    });
+})
+
+
+app.get("/api/students/:id" , (req , res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(s => s.id === id);
+
+    if (!student) {
+        return res.status(404).json({
+            success : false,
+            message : "student not found"
+        });
+    }
+
+    res.json({
+        success: true,
+        data : student
+    });
 });
 
-server.listen(3000 , () => {
-    console.log("server running on port 3000");
+
+////// post method 
+
+
+app.post("/api/students" , (req , res) => {
+
+    const { name , age , course} = req.body;
+
+    if (!name || !age || !course) {
+        return res.status(400).json ({
+            success : false,
+            message : "please provide all fields"
+        });
+    }
+
+    const newStudents = {
+        id : Date.now(),
+        name , 
+        age , 
+        course
+    };
+
+    students.push(newStudents);
+
+    res.status(201). json({
+        success : true,
+        message : "student added succesfully",
+        data : newStudents  
+    });
+});
+
+///////////// put method 
+
+app.put("/api/students/:id" , (req , res) => {
+    const id = Number(req.params.id);
+
+    const index = students.findIndex(s => s.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({
+            success : false , 
+            message: "student not found"
+        });
+    }
+
+    const {name , age , course } = req.body;
+
+    if (!name || !age || !course) {
+        return res.status(400).json ({
+            success : false,
+            message : "please provide all fields"
+        });
+    }
+
+    students[index] = {
+        id ,
+        name ,
+        age , 
+        course
+    };
+
+    res.status(200).json({
+        success: true,
+        message : "student updated",
+        data : students[index]
+    });
 });
 
 
+/// patch 
+
+app.patch("/api/students/:id" , (req ,res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(s=> s.id === id);
+
+
+   if (!student) {
+        return res.status(404).json({
+            success : false , 
+            message: "student not found"
+        });
+    }
+
+    Object.assign(student , req.body );
+
+
+     res.status(200).json({
+        success: true,
+        message : "student updated",
+        data : students,
+    });
+});
+
+app.delete("/api/students/:id" , (req , res) => {
+    const id = Number(req.params.id);
+
+    const student = students.find(s => s.id === id);
+
+
+   if (!student) {
+        return res.status(404).json({
+            success : false , 
+            message: "student not found"
+        });
+    }
+
+    students = students.filter(s => s.id !== id);
+
+
+     res.status(200).json({
+        success: true,
+        message : "student deleted sucessfully",
+        data : student
+    });
+    
+
+
+})
 
 
 
@@ -219,7 +409,9 @@ server.listen(3000 , () => {
 
 
 
-
+app.listen(5000 , () => {
+    console.log("server running on 5000");
+})
 
 
 
