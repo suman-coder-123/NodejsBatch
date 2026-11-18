@@ -93,6 +93,15 @@ middleware => it is checkpoint between the code execution
 
 
 
+how to connect frontend with backend 
+
+middleware between frontend and backend => cors()
+
+
+
+
+
+
 
 
 
