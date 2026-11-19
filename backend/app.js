@@ -318,40 +318,40 @@ app.post("/api/students" , (req , res) => {
 
 ///////////// put method 
 
-// app.put("/api/students/:id" , (req , res) => {
-//     const id = Number(req.params.id);
+app.put("/api/students/:id" , (req , res) => {
+    const id = Number(req.params.id);
 
-//     const index = students.findIndex(s => s.id === id);
+    const index = students.findIndex(s => s.id === id);
 
-//     if (index === -1) {
-//         return res.status(404).json({
-//             success : false , 
-//             message: "student not found"
-//         });
-//     }
+    if (index === -1) {
+        return res.status(404).json({
+            success : false , 
+            message: "student not found"
+        });
+    }
 
-//     const {name , age , course } = req.body;
+    const {name , email , course } = req.body;
 
-//     if (!name || !age || !course) {
-//         return res.status(400).json ({
-//             success : false,
-//             message : "please provide all fields"
-//         });
-//     }
+    if (!name || !email || !course) {
+        return res.status(400).json ({
+            success : false,
+            message : "please provide all fields"
+        });
+    }
 
-//     students[index] = {
-//         id ,
-//         name ,
-//         age , 
-//         course
-//     };
+    students[index] = {
+        id ,
+        name ,
+        email , 
+        course
+    };
 
-//     res.status(200).json({
-//         success: true,
-//         message : "student updated",
-//         data : students[index]
-//     });
-// });
+    res.status(200).json({
+        success: true,
+        message : "student updated",
+        data : students[index]
+    });
+});
 
 
 // /// patch 
@@ -379,31 +379,31 @@ app.post("/api/students" , (req , res) => {
 //     });
 // });
 
-// app.delete("/api/students/:id" , (req , res) => {
-//     const id = Number(req.params.id);
+app.delete("/api/students/:id" , (req , res) => {
+    const id = Number(req.params.id);
 
-//     const student = students.find(s => s.id === id);
-
-
-//    if (!student) {
-//         return res.status(404).json({
-//             success : false , 
-//             message: "student not found"
-//         });
-//     }
-
-//     students = students.filter(s => s.id !== id);
+    const student = students.find(s => s.id === id);
 
 
-//      res.status(200).json({
-//         success: true,
-//         message : "student deleted sucessfully",
-//         data : student
-//     });
+   if (!student) {
+        return res.status(404).json({
+            success : false , 
+            message: "student not found"
+        });
+    }
+
+    students = students.filter(s => s.id !== id);
+
+
+     res.status(200).json({
+        success: true,
+        message : "student deleted sucessfully",
+        data : student
+    });
     
 
 
-// })
+ })
 
 
 

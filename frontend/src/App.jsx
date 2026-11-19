@@ -3,6 +3,9 @@ import { useState } from "react";
 
 const App = () => {
 
+  const[loading , setLoading] = useState(false);
+  const [editingID , setEditingId] = useState(null);
+
   const [students , setStudents] = useState([]);
   const [ formData , setFormData] = useState({
     name : "",
@@ -12,6 +15,9 @@ const App = () => {
 
   const API_URL = "http://localhost:5000/api/students"
 
+
+
+  /// get method 
   const getStudents = async () => {
     try {
       const response = await fetch(API_URL);
@@ -29,17 +35,31 @@ const App = () => {
   } , []);
 
 
+
+  // handle input 
   const handleChange = (e) => {
     setFormData ({
       ...formData , [e.target.name] : [e.target.value]
-    });
+    }); 
   };
 
+
+  // handle submit 
   const handleSubmit = async () => {
   
+    setLoading(true);
     try {
-      const response = await fetch(API_URL , {
-        method : "POST", 
+
+      const method = editingID ? "PUT" : "POST";
+      const url = editingID ? `${API_URL}/${editingID}` : API_URL;
+
+
+      console.log("reuqest method" , method);
+      console.log("url " , url);
+      console.log(formData);
+
+      const response = await fetch(url , {
+        method : method, 
         headers : {
           "Content-Type" : "application/json"
         },
@@ -47,6 +67,9 @@ const App = () => {
       });
 
       const result = await response.json();
+
+
+      console.log("backend" , result);
       if (!response.ok){
         alert(result.message);
         return ;
@@ -59,16 +82,86 @@ const App = () => {
           course: ""
         });
 
-        getStudents();
+        setEditingId(null);
+
+       await getStudents();
       
     } catch(error) {
       console.log("error = "+ error);
+      alert("something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
+
+
+  // edit student 
+
+  const handleEdit = (student) => {
+    setEditingId(student.id);
+
+    setFormData({
+      name : student.name || "",
+      email : student.email || "",
+      course : student.course || ""
+    });
+  }
+
+
+  // delete student 
+
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("ar eyou sure to delete this student");
+    if (!confirmDelete) return ;
+
+
+    try {
+      const response = await fetch(`${API_URL}/${id}` , {
+        method : "DELETE"
+      });
+
+      const result = await response.json();
+
+
+      if (!response.ok) {
+        alert("result.message");
+        return;
+      }
+
+      alert(result.message);
+
+
+      if (editingID === id){
+        handleCancel();
+      }
+
+      await getStudents();
+    } catch (error) {
+      console.log("error"+ error);
+      alert("unable to delete student");
+    }
+  };
+
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setFormData({
+      name : "",
+      email : "",
+      course : ""
+    });
+  };
+
+
   return (
     <div>
       <h1>Student Management System </h1>
 
+
+      <div>
+        <h2>{editingID ? "Update Student" : "Register Student"}</h2>
+      </div>
       <form  onSubmit={handleSubmit}>
         <label htmlFor="name">Name : </label>
         <input type="text" 
@@ -99,7 +192,10 @@ const App = () => {
            onChange={handleChange}
            required/>
 <br /><br />
-           <button type="submit">Register Student </button>
+           <button type="submit" disabled = {loading} >{loading ? "please wait ...." : editingID ? "upadte student": "register student"} </button>
+
+
+           {editingID && <button  type="button" onClick={handleCancel}> Cancel Edit</button>}
       </form>
 
 
@@ -111,6 +207,11 @@ const App = () => {
             <h3>{student.name}</h3>
             <p>{student.email}</p>
             <p>{student.course}</p>
+
+            <div>
+              <button onClick={() => handleEdit(student)}>Edit</button>
+              <button onClick={() => handleDelete(student.id)}>Delete</button>
+            </div>
           </div>
         ))}
       </div>
