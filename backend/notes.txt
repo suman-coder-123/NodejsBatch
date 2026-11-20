@@ -99,6 +99,29 @@ middleware between frontend and backend => cors()
 
 
 
+mongoDB => it is NoSQL database that stores information in document format 
+
+
+
+
+database => container for collection 
+collection => group od doucments 
+document => individual record 
+field => property inside a document 
+_id => unique doucment identifier 
+
+
+
+create mongodb database in backend 
+
+
+mongoose is an ODM (object data modelling ) library for MongoDB and Nodejs 
+
+
+
+
+
+
 
 
 

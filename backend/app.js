@@ -221,9 +221,13 @@
 
 const express = require("express");
 const cors = require("cors");
+const Dotenv = require("dotenv");
+const connectDB = require("./config/db");
+
+
+Dotenv.config();
 
 const app = express();
-
 
 app.use(express.json());
 app.use(cors());
@@ -234,132 +238,178 @@ app.get("/" , (req , res) => {
 });
 
 
-app.get("/about" , (req , res) => {
-    res.send("this is about page ");
-} );
-
-/// temporary data 
-  let students = [
-        {
-        id : 1,
-        name : "rahul",
-        course : "mern stack "
-    }, 
-    {
-        id: 2, 
-        name : "priya",
-        course : "java",
-    },
-     {
-        id : 3,
-        name : "suman",
-        course : "java full stack",
-    }
-    ];
-
-app.get("/api/students" , (req, res) => {
-
-    res.status(200).json({
-        success : true,
-        message : "student fetched successfully",
-        data : students
-    });
-})
 
 
-app.get("/api/students/:id" , (req , res) => {
-    const id = Number(req.params.id);
 
-    const student = students.find(s => s.id === id);
 
-    if (!student) {
-        return res.status(404).json({
-            success : false,
-            message : "student not found"
+const startServer = async () =>{
+    try {
+        await connectDB();
+
+        const PORT = process.env.PORT || 5000;
+
+        app.listen(PORT , () => {
+            console.log("server running on port " , PORT);
         });
+    } catch(error) {
+        console.log("server startup failed" , error.message);
     }
+};
 
-    res.json({
-        success: true,
-        data : student
-    });
-});
+startServer();
 
 
-////// post method 
 
 
-app.post("/api/students" , (req , res) => {
+// app.get("/about" , (req , res) => {
+//     res.send("this is about page ");
+// } );
 
-    const { name , email , course} = req.body;
+// /// temporary data 
+//   let students = [
+//         {
+//         id : 1,
+//         name : "rahul",
+//         course : "mern stack "
+//     }, 
+//     {
+//         id: 2, 
+//         name : "priya",
+//         course : "java",
+//     },
+//      {
+//         id : 3,
+//         name : "suman",
+//         course : "java full stack",
+//     }
+//     ];
 
-    if (!name || !email || !course) {
-        return res.status(400).json ({
-            success : false,
-            message : "please provide all fields"
-        });
-    }
+// app.get("/api/students" , (req, res) => {
 
-    const newStudents = {
-        id : Date.now(),
-        name , 
-        email , 
-        course
-    };
-
-    students.push(newStudents);
-
-    res.status(201). json({
-        success : true,
-        message : "student added succesfully",
-        data : newStudents  
-    });
-});
-
-///////////// put method 
-
-app.put("/api/students/:id" , (req , res) => {
-    const id = Number(req.params.id);
-
-    const index = students.findIndex(s => s.id === id);
-
-    if (index === -1) {
-        return res.status(404).json({
-            success : false , 
-            message: "student not found"
-        });
-    }
-
-    const {name , email , course } = req.body;
-
-    if (!name || !email || !course) {
-        return res.status(400).json ({
-            success : false,
-            message : "please provide all fields"
-        });
-    }
-
-    students[index] = {
-        id ,
-        name ,
-        email , 
-        course
-    };
-
-    res.status(200).json({
-        success: true,
-        message : "student updated",
-        data : students[index]
-    });
-});
+//     res.status(200).json({
+//         success : true,
+//         message : "student fetched successfully",
+//         data : students
+//     });
+// })
 
 
-// /// patch 
-
-// app.patch("/api/students/:id" , (req ,res) => {
+// app.get("/api/students/:id" , (req , res) => {
 //     const id = Number(req.params.id);
 
-//     const student = students.find(s=> s.id === id);
+//     const student = students.find(s => s.id === id);
+
+//     if (!student) {
+//         return res.status(404).json({
+//             success : false,
+//             message : "student not found"
+//         });
+//     }
+
+//     res.json({
+//         success: true,
+//         data : student
+//     });
+// });
+
+
+// ////// post method 
+
+
+// app.post("/api/students" , (req , res) => {
+
+//     const { name , email , course} = req.body;
+
+//     if (!name || !email || !course) {
+//         return res.status(400).json ({
+//             success : false,
+//             message : "please provide all fields"
+//         });
+//     }
+
+//     const newStudents = {
+//         id : Date.now(),
+//         name , 
+//         email , 
+//         course
+//     };
+
+//     students.push(newStudents);
+
+//     res.status(201). json({
+//         success : true,
+//         message : "student added succesfully",
+//         data : newStudents  
+//     });
+// });
+
+// ///////////// put method 
+
+// app.put("/api/students/:id" , (req , res) => {
+//     const id = Number(req.params.id);
+
+//     const index = students.findIndex(s => s.id === id);
+
+//     if (index === -1) {
+//         return res.status(404).json({
+//             success : false , 
+//             message: "student not found"
+//         });
+//     }
+
+//     const {name , email , course } = req.body;
+
+//     if (!name || !email || !course) {
+//         return res.status(400).json ({
+//             success : false,
+//             message : "please provide all fields"
+//         });
+//     }
+
+//     students[index] = {
+//         id ,
+//         name ,
+//         email , 
+//         course
+//     };
+
+//     res.status(200).json({
+//         success: true,
+//         message : "student updated",
+//         data : students[index]
+//     });
+// });
+
+
+// // /// patch 
+
+// // app.patch("/api/students/:id" , (req ,res) => {
+// //     const id = Number(req.params.id);
+
+// //     const student = students.find(s=> s.id === id);
+
+
+// //    if (!student) {
+// //         return res.status(404).json({
+// //             success : false , 
+// //             message: "student not found"
+// //         });
+// //     }
+
+// //     Object.assign(student , req.body );
+
+
+// //      res.status(200).json({
+// //         success: true,
+// //         message : "student updated",
+// //         data : students,
+// //     });
+// // });
+
+// app.delete("/api/students/:id" , (req , res) => {
+//     const id = Number(req.params.id);
+
+//     const student = students.find(s => s.id === id);
 
 
 //    if (!student) {
@@ -369,41 +419,18 @@ app.put("/api/students/:id" , (req , res) => {
 //         });
 //     }
 
-//     Object.assign(student , req.body );
+//     students = students.filter(s => s.id !== id);
 
 
 //      res.status(200).json({
 //         success: true,
-//         message : "student updated",
-//         data : students,
+//         message : "student deleted sucessfully",
+//         data : student
 //     });
-// });
-
-app.delete("/api/students/:id" , (req , res) => {
-    const id = Number(req.params.id);
-
-    const student = students.find(s => s.id === id);
-
-
-   if (!student) {
-        return res.status(404).json({
-            success : false , 
-            message: "student not found"
-        });
-    }
-
-    students = students.filter(s => s.id !== id);
-
-
-     res.status(200).json({
-        success: true,
-        message : "student deleted sucessfully",
-        data : student
-    });
     
 
 
- })
+//  })
 
 
 
@@ -411,9 +438,9 @@ app.delete("/api/students/:id" , (req , res) => {
 
 
 
-app.listen(5000 , () => {
-    console.log("server running on 5000");
-})
+// app.listen(5000 , () => {
+//     console.log("server running on 5000");
+// })
 
 
 
