@@ -118,6 +118,20 @@ create mongodb database in backend
 mongoose is an ODM (object data modelling ) library for MongoDB and Nodejs 
 
 
+schema => a schema defines the structure of documents inside a MongoDB collection 
+
+
+model => model is created from a  schema and it can perform database operations 
+
+method of database operations 
+
+create() => to insert new doucment
+find() => get all users 
+findById => find one user 
+findByIDAndUpdate => update a user 
+findByIDAndDelete => delete student 
+
+
 
 
 

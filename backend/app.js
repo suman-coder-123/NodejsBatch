@@ -219,48 +219,6 @@
 
 
 
-const express = require("express");
-const cors = require("cors");
-const Dotenv = require("dotenv");
-const connectDB = require("./config/db");
-
-
-Dotenv.config();
-
-const app = express();
-
-app.use(express.json());
-app.use(cors());
-
-
-app.get("/" , (req , res) => {
-    res.send("student management api is running ");
-});
-
-
-
-
-
-
-const startServer = async () =>{
-    try {
-        await connectDB();
-
-        const PORT = process.env.PORT || 5000;
-
-        app.listen(PORT , () => {
-            console.log("server running on port " , PORT);
-        });
-    } catch(error) {
-        console.log("server startup failed" , error.message);
-    }
-};
-
-startServer();
-
-
-
-
 // app.get("/about" , (req , res) => {
 //     res.send("this is about page ");
 // } );
@@ -442,10 +400,119 @@ startServer();
 //     console.log("server running on 5000");
 // })
 
+require("dotenv").config();
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const Student = require("./models/Student");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log("MongoDB Connected Successfully");
+
+        app.listen(process.env.PORT || 5000, () => {
+            console.log("Server running on port 5000");
+        });
+    })
+    .catch((error) => {
+        console.log( error.message);
+    });
 
 
+// GET: Get all students
+app.get("/api/students", async (req, res) => {
+    try {
+        const students = await Student.find();
+
+        res.status(200).json({
+            success: true,
+            data: students
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
 
 
+// POST: Save new student
+app.post("/api/students", async (req, res) => {
+    try {
+        const { name, email, course } = req.body;
+
+        const student = await Student.create({
+            name,
+            email,
+            course
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Student saved successfully",
+            data: student
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
 
 
+// PUT: Update student
+app.put("/api/students/:id", async (req, res) => {
+    try {
+        const updatedStudent = await Student.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
 
+        res.status(200).json({
+            success: true,
+            message: "Student updated successfully",
+            data: updatedStudent
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
+
+
+// DELETE: Delete student
+app.delete("/api/students/:id", async (req, res) => {
+    try {
+        const deletedStudent = await Student.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Student deleted successfully",
+            data: deletedStudent
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+});
