@@ -4,7 +4,7 @@
 
 const { default: mongoose } = require("mongoose");
 
-const StudentSchema = new mongoose.Schema(
+const studentSchema = new mongoose.Schema(
     {
         name : {
             type : String,
@@ -32,6 +32,6 @@ const StudentSchema = new mongoose.Schema(
 
 // create model 
 
-const Student = mongoose.model("Student" , StudentSchema);
+const Student = mongoose.model("Student" , studentSchema);
 
 module.exports = Student;

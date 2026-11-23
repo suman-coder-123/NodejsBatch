@@ -137,6 +137,20 @@ findByIDAndDelete => delete student
 
 
 
+MVC =>
+ model  => handle database and structure data 
+view  => display the user interface 
+controller  => handle request and response / logic 
+
+ 
+react form => express router => controller  => model => mongodb data => database 
+
+
+
+
+
+
+
 
 
 
