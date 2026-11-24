@@ -1,4 +1,20 @@
 const Student = require("../models/Student")
+const fs = require("fs");
+const path = require("path");
+
+
+const removeImage = (imagePath) => {
+    if(!imagePath) return;
+
+    const filname = path.basename(imagePath);
+    const fullPath = path.join(__dirname, ".." , "uploads" , filename);
+
+    if (fs.existsSync(fullPath)) {
+        fs.unlinkSync(fullPath);
+    }
+};
+
+
 
 // GET: Get all students
  const getStudent = async (req, res) => {
@@ -22,7 +38,14 @@ const Student = require("../models/Student")
 // POST: Save new student
 const createStudent =  async (req, res) => {
     try {
-       const student = await Student.create(req.body);
+
+        const {name , email , course } = req.body;
+       const student = await Student.create({
+        name , 
+        course , 
+        email, 
+        image : req.file ? `/uploads/${req.file.filename}`: ""
+       });
 
         res.status(201).json({
             success: true,
@@ -40,28 +63,10 @@ const createStudent =  async (req, res) => {
 
 const updateStudent = async (req, res) => {
     try {
-        const { name, email, course } = req.body;
-
-        // Check all fields
-        if (!name || !email || !course) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide all fields"
-            });
-        }
-
+    
         const student = await Student.findByIdAndUpdate(
-            req.params.id,
-            {
-                name,
-                email,
-                course
-            },
-            {
-                new: true,
-                runValidators: true
-            }
-        );
+            req.params.id);
+          
 
         // Check if student exists
         if (!student) {
@@ -71,6 +76,15 @@ const updateStudent = async (req, res) => {
             });
         }
 
+        student.name = req.body.name;
+        student.email = req.body.email;
+        student.course = req.body.course;
+        if (req.file) {
+            removeImage(student.iamge) ;
+            student.image = `/uploads/${req.file.filename}`;
+        }
+
+        await student.save();
         res.status(200).json({
             success: true,
             message: "Student updated successfully",
@@ -96,6 +110,8 @@ const deleteStudent = async (req, res) => {
                 message: "Student not found"
             });
         }
+
+        removeImage(student.image);
 
         res.status(200).json({
             success: true,

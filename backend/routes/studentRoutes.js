@@ -1,14 +1,12 @@
 const express = require("express");
-
 const router = express.Router();
-
 const {getStudent, createStudent , updateStudent , deleteStudent} = require("../controllers/studentController");
+const upload = require("../middleware/upload");
 
-console.log(getStudent , createStudent , updateStudent);
 
 router.get("/" , getStudent);
-router.post("/" , createStudent);
-router.put("/:id" , updateStudent);
+router.post("/" , upload.single("image"), createStudent);
+router.put("/:id" , upload.single("image") ,updateStudent);
 router.delete("/:id" , deleteStudent);
 
 

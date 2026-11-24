@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 
 const API_URL = "http://localhost:5000/api/students";
+const SERVER_URL = "http://localhost:5000";
 
 function App() {
 
@@ -11,6 +12,9 @@ function App() {
         email: "",
         course: ""
     });
+
+    const [ imageFile , setImageFile] = useState(null);
+    const [ imagePreview , setImagePreview] = useState("");
 
     const [editingId, setEditingId] = useState(null);
         const [loading, setLoading] = useState(false);
@@ -46,53 +50,74 @@ function App() {
     };
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+     const handleImageChange = (e) => {
+        const file = e.target.files[0];
 
-        setLoading(true);
-
-        try {
-            const method = editingId ? "PUT" : "POST";
-
-            const url = editingId
-                ? `${API_URL}/${editingId}`
-                : API_URL;
-
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                alert(result.message);
-                return;
-            }
-
-            alert(result.message);
-
-            setFormData({
-                name: "",
-                email: "",
-                course: ""
-            });
-
-            setEditingId(null);
-
-            await getStudents();
-
-        } catch (error) {
-            console.log("Error:", error);
-            alert("Something went wrong");
-        } finally {
-            setLoading(false);
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
         }
-    };
+     };
 
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+        const payload = new FormData();
+
+        payload.append("name", formData.name);
+        payload.append("email", formData.email);
+        payload.append("course", formData.course);
+
+        // Add image only when a new image is selected
+        if (imageFile) {
+            payload.append("image", imageFile);
+        }
+
+        const method = editingId ? "PUT" : "POST";
+
+        const url = editingId
+            ? `${API_URL}/${editingId}`
+            : API_URL;
+
+        const response = await fetch(url, {
+            method,
+            body: payload
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message || "Something went wrong");
+            return;
+        }
+
+        alert(result.message || "Student saved successfully");
+
+        // Reset form
+        setFormData({
+            name: "",
+            email: "",
+            course: ""
+        });
+
+        setImageFile(null);
+        setImagePreview("");
+        setEditingId(null);
+
+        // Refresh student list
+        await getStudents();
+
+    } catch (error) {
+        console.log("Submit error:", error);
+        alert("Something went wrong");
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleEdit = (student) => {
         setEditingId(student._id);
@@ -102,6 +127,10 @@ function App() {
             email: student.email,
             course: student.course
         });
+        setImageFile(null);
+        setImagePreview (
+            student.image ? `${SERVER_URL}${student.image}` : ""
+        );
     };
 
 
@@ -151,6 +180,8 @@ function App() {
             email: "",
             course: ""
         });
+        setImageFile(null);
+        setImagePreview("");
     };
 
 
@@ -198,6 +229,23 @@ function App() {
                         required
                     />
 
+                    <label > Student Image</label>
+                    <input type="file" name="image" accept="image/*"
+                    onChange={handleImageChange}
+                     style={{
+            width: "120px",
+            height: "120px",
+            objectFit: "contain",
+            borderRadius: "8px"
+        }} />
+
+                    {imagePreview && (
+                        <img src={imagePreview}/>
+                    )}
+
+
+
+
                     <button type="submit" disabled={loading}>
                         {loading
                             ? "Please wait..."
@@ -238,6 +286,14 @@ function App() {
                                 className="student-card"
                                 key={student._id}
                             >
+                                {student.image && (
+                                    <img   src={`${SERVER_URL}${student.image}`}  style={{
+            width: "120px",
+            height: "120px",
+            objectFit: "contain",
+            borderRadius: "8px"
+        }}/>
+                                )}
 
                                 <h3>{student.name}</h3>
 
