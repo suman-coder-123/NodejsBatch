@@ -38,15 +38,38 @@ const createStudent =  async (req, res) => {
     }
 };
 
-
-// PUT: Update student
-const updateStudent =  async (req, res) => {
+const updateStudent = async (req, res) => {
     try {
+        const { name, email, course } = req.body;
+
+        // Check all fields
+        if (!name || !email || !course) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide all fields"
+            });
+        }
+
         const student = await Student.findByIdAndUpdate(
             req.params.id,
-            req.body,
-            { new: true }
+            {
+                name,
+                email,
+                course
+            },
+            {
+                new: true,
+                runValidators: true
+            }
         );
+
+        // Check if student exists
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found"
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -61,14 +84,18 @@ const updateStudent =  async (req, res) => {
         });
     }
 };
-
-
-// DELETE: Delete student
-const deleteStudent =  async (req, res) => {
+const deleteStudent = async (req, res) => {
     try {
         const student = await Student.findByIdAndDelete(
             req.params.id
         );
+
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found"
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -84,8 +111,7 @@ const deleteStudent =  async (req, res) => {
     }
 };
 
-
-module.export = {
+module.exports = {
     
     getStudent, 
     createStudent , updateStudent , deleteStudent
