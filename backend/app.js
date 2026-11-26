@@ -406,6 +406,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const studentRoutes = require("./routes/studentRoutes");
+const authRoutes = require ("./routes/authRoutes");
 const app = express();
 
 
@@ -415,6 +416,7 @@ app.use(express.json());
 app.use("/uploads" , express.static("uploads"));
 
 app.use("/api/students" , studentRoutes);
+app.use("/api/auth" ,authRoutes );
 
 const startServer = async () => {
     await connectDB();

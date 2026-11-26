@@ -146,6 +146,20 @@ controller  => handle request and response / logic
 react form => express router => controller  => model => mongodb data => database 
 
 
+Authentication => it means verifying who the user is 
+
+=> login info => this dteails are correct or not 
+
+ Authorization  => it means checking what the Authenticated user is allowed to do 
+admin => add , edit , delete , student , teachers 
+teacher => view , update , student record
+student => view their own people 
+
+
+token  => jsonwebtoken => create and verify JWT tokens 
+bcryptjs =>  hash and compare password 
+
+suman123 => random salt => ncsvdf63724676bhsbxmm+_sdjsvc
 
 
 
